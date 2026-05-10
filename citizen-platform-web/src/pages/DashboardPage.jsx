@@ -1,21 +1,8 @@
-import DashboardLayout from "../layouts/DashboardLayout";
-
-import { useAuth } from "../context/AuthContext";
-
 function DashboardPage() {
-
-  const { logout } = useAuth();
-
-  const handleLogout = () => {
-
-    logout();
-
-    window.location.href = "/";
-  };
 
   return (
 
-    <DashboardLayout>
+    <div>
 
       <h1>Dashboard</h1>
 
@@ -23,11 +10,7 @@ function DashboardPage() {
         Welcome to Citizen Platform 🚀
       </p>
 
-      <button onClick={handleLogout}>
-        Logout
-      </button>
-
-    </DashboardLayout>
+    </div>
   );
 }
 

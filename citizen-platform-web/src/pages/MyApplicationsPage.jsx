@@ -109,14 +109,14 @@ const MyApplicationsPage = () => {
                       <h2 className="text-2xl font-bold text-gray-800">
                         {
                           app.scheme_id
-                            ?.name
+                            ?.title
                         }
                       </h2>
 
                       <p className="text-blue-600 mt-1">
                         {
                           app.scheme_id
-                            ?.category
+                            ?.department
                         }
                       </p>
 

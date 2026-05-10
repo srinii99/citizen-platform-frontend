@@ -77,6 +77,18 @@ function DashboardLayout({ children }) {
           Applications
         </Link>
 
+
+        <Link
+          to="/eligible-schemes"
+          style={{
+            color: "white",
+            display: "block",
+            marginBottom: "10px"
+          }}
+        >
+          Eligible Schemes
+        </Link>
+
         <Link
           to="/profile"
           style={{

@@ -299,14 +299,14 @@ const ApplicationTrackerPage = () => {
           <h2 className="text-2xl font-semibold text-gray-800">
             {
               application.scheme_id
-                ?.name
+                ?.title
             }
           </h2>
 
           <p className="text-blue-600 mt-1">
             {
               application.scheme_id
-                ?.category
+                ?.department
             }
           </p>
 

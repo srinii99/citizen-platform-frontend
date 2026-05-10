@@ -1,43 +1,94 @@
 import mongoose from "mongoose";
 
 const schemeSchema =
-  new mongoose.Schema(
-    {
-      name: {
-        type: String,
-        required: true,
+  new mongoose.Schema({
+
+    title: {
+      type: String,
+      required: true
+    },
+
+    description: {
+      type: String
+    },
+
+    department: {
+      type: String
+    },
+
+    benefits: {
+      type: String
+    },
+
+    documents_required: [
+      String
+    ],
+
+    application_fee: {
+      type: Number,
+      default: 0
+    },
+
+    status: {
+      type: String,
+      enum: [
+        "ACTIVE",
+        "INACTIVE"
+      ],
+      default: "ACTIVE"
+    },
+
+    // ✅ Eligibility Rules
+    eligibility: {
+
+      min_age: {
+        type: Number,
+        default: 0
       },
 
-      category: {
-        type: String,
+      max_age: {
+        type: Number,
+        default: 100
       },
 
-      description: {
+      gender: {
         type: String,
+        enum: [
+          "MALE",
+          "FEMALE",
+          "OTHER",
+          "ANY"
+        ],
+        default: "ANY"
       },
 
-      benefits: {
-        type: String,
+      max_income: {
+        type: Number,
+        default: 999999999
       },
 
       state: {
         type: String,
+        default: "ANY"
       },
 
-      is_active: {
-        type: Boolean,
-        default: true,
+      caste: {
+        type: String,
+        default: "ANY"
       },
 
-      eligibility_rules: {
-        type: mongoose.Schema.Types.Mixed,
-        default: {},
-      },
-    },
-    {
-      timestamps: true,
+      occupation: {
+        type: String,
+        default: "ANY"
+      }
     }
-  );
+
+  },
+
+  {
+    timestamps: true
+  }
+);
 
 export const Scheme =
   mongoose.model(

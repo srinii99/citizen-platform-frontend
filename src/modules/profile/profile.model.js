@@ -36,6 +36,7 @@ const profileSchema = new mongoose.Schema({
   employment_status: String,
 
   occupation_category: String,
+  occupation : String,
 
   bpl_status: Boolean,
 

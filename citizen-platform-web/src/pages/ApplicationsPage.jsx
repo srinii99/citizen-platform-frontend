@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 
 import api from "../api/api";
 
-import DashboardLayout from "../layouts/DashboardLayout";
+
 
 function ApplicationsPage() {
 
@@ -43,7 +43,7 @@ function ApplicationsPage() {
 
   return (
 
-    <DashboardLayout>
+    <div>
 
       <h1>My Applications</h1>
 
@@ -86,7 +86,7 @@ function ApplicationsPage() {
         ))
       }
 
-    </DashboardLayout>
+    </div>
   );
 }
 

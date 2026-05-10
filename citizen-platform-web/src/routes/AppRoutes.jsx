@@ -4,34 +4,50 @@ import {
   Route
 } from "react-router-dom";
 
-import LoginPage from "../pages/LoginPage";
+import LoginPage
+  from "../pages/LoginPage";
 
-import DashboardPage from "../pages/DashboardPage";
+import DashboardPage
+  from "../pages/DashboardPage";
 
-import ProtectedRoute from "./ProtectedRoute";
-import SchemesPage from "../pages/SchemesPage";
-import ApplicationsPage from "../pages/ApplicationsPage";
-import ProfilePage from "../pages/ProfilePage";
+import ProtectedRoute
+  from "./ProtectedRoute";
+
+import SchemesPage
+  from "../pages/SchemesPage";
+
+import ApplicationsPage
+  from "../pages/ApplicationsPage";
+
+import ProfilePage
+  from "../pages/ProfilePage";
+
 import EligibleSchemesPage
-from "../pages/EligibleSchemesPage";
+  from "../pages/EligibleSchemesPage";
+
 import SchemeDetailsPage
-from "../pages/SchemeDetailsPage";
+  from "../pages/SchemeDetailsPage";
+
 import ApplicationTrackerPage
-from "../pages/ApplicationTrackerPage";
+  from "../pages/ApplicationTrackerPage";
+
 import MyApplicationsPage
-from "../pages/MyApplicationsPage";
+  from "../pages/MyApplicationsPage";
+
 import AdminDashboardPage
-from "../pages/AdminDashboardPage";
+  from "../pages/AdminDashboardPage";
+
 import AdminRoute
-from "./AdminRoute";
-import Navbar
-from "../components/Navbar";
+  from "./AdminRoute";
+
+import DashboardLayout
+  from "../layouts/DashboardLayout";
 
 function AppRoutes() {
 
   return (
-    <BrowserRouter>
 
+    <BrowserRouter>
 
       <Routes>
 
@@ -41,80 +57,110 @@ function AppRoutes() {
           element={<LoginPage />}
         />
 
-        {/* Protected Dashboard */}
+        {/* Dashboard */}
         <Route
           path="/dashboard"
           element={
             <ProtectedRoute>
-              <DashboardPage />
+              <DashboardLayout>
+                <DashboardPage />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
+
+        {/* Schemes */}
         <Route
           path="/schemes"
           element={
             <ProtectedRoute>
-              <SchemesPage />
-            </ProtectedRoute>
-           }
-        />
-        <Route
-          path="/applications"
-          element={
-            <ProtectedRoute>
-              <ApplicationsPage />
+              <DashboardLayout>
+                <SchemesPage />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
-        <Route
-          path="/profile"
-          element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          }
-        />
+
+        {/* Eligible Schemes */}
         <Route
           path="/eligible-schemes"
           element={
             <ProtectedRoute>
-              <EligibleSchemesPage />
+              <DashboardLayout>
+                <EligibleSchemesPage />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
 
+        {/* Applications */}
+        <Route
+          path="/applications"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <ApplicationsPage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Profile */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout>
+                <ProfilePage />
+              </DashboardLayout>
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Scheme Details */}
         <Route
           path="/schemes/:id"
           element={
             <ProtectedRoute>
-              <SchemeDetailsPage />
+              <DashboardLayout>
+                <SchemeDetailsPage />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
 
+        {/* Application Tracker */}
         <Route
           path="/applications/:id"
           element={
             <ProtectedRoute>
-              <ApplicationTrackerPage />
+              <DashboardLayout>
+                <ApplicationTrackerPage />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
 
+        {/* My Applications */}
         <Route
           path="/my-applications"
           element={
             <ProtectedRoute>
-              <MyApplicationsPage />
+              <DashboardLayout>
+                <MyApplicationsPage />
+              </DashboardLayout>
             </ProtectedRoute>
           }
         />
 
+        {/* Admin */}
         <Route
           path="/admin"
           element={
             <AdminRoute>
-              <AdminDashboardPage />
+              <DashboardLayout>
+                <AdminDashboardPage />
+              </DashboardLayout>
             </AdminRoute>
           }
         />

@@ -5,6 +5,7 @@ import {
   getApplications,
   getApplicationById,
   uploadDocument,
+  applyForScheme,
 } from "./application.controller.js";
 
 import {
@@ -14,6 +15,8 @@ import {
 import {
   upload,
 } from "../../middleware/upload.middleware.js";
+
+
 
 const router =
   express.Router();
@@ -51,5 +54,10 @@ router.post(
   uploadDocument
 );
 
+router.post(
+  "/apply/:schemeId",
+  authMiddleware,
+  applyForScheme
+);
 
 export default router;

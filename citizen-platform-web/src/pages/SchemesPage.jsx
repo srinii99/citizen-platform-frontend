@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 
 import api from "../api/api";
 
-import DashboardLayout from "../layouts/DashboardLayout";
 import { useNavigate } from "react-router-dom";
 
 function SchemesPage() {
@@ -63,7 +62,7 @@ function SchemesPage() {
 
   return (
 
-    <DashboardLayout>
+    <div>
 
       <h1>Government Schemes</h1>
 
@@ -112,7 +111,7 @@ function SchemesPage() {
         ))
       }
 
-    </DashboardLayout>
+    </div>
   );
 }
 

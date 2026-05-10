@@ -182,3 +182,74 @@ export const uploadDocument =
       });
     }
   };
+
+// ✅ Apply for Scheme
+export const applyForScheme =
+  async (req, res) => {
+
+    try {
+
+      const { schemeId } =
+        req.params;
+
+      // ✅ Check existing application
+      const existingApplication =
+        await Application.findOne({
+
+          user_id:
+            req.user.user_id,
+
+          scheme_id:
+            schemeId
+        });
+
+      if (
+        existingApplication
+      ) {
+
+        return res.status(400)
+          .json({
+
+            success: false,
+
+            message:
+              "Application already exists"
+          });
+      }
+
+      // ✅ Create application
+      const application =
+        await Application.create({
+
+          user_id:
+            req.user.user_id,
+
+          scheme_id:
+            schemeId,
+
+          status:
+            "STARTED"
+        });
+
+      res.status(201).json({
+
+        success: true,
+
+        message:
+          "Application created successfully",
+
+        data:
+          application
+      });
+
+    } catch (err) {
+
+      res.status(500).json({
+
+        success: false,
+
+        error:
+          err.message
+      });
+    }
+  };

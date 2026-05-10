@@ -2,7 +2,7 @@ import express from "express";
 
 import {
   getSchemes,
-  checkEligibility,
+  getEligibleSchemes,
   getSchemeById,
 } from "./scheme.controller.js";
 
@@ -21,7 +21,7 @@ router.get(
 router.get(
   "/eligible",
   authMiddleware,
-  checkEligibility
+  getEligibleSchemes
 );
 
 router.get(
