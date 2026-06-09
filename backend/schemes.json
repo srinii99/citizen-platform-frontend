@@ -1,0 +1,164 @@
+[
+  {
+    "name": "Karnataka Student Scholarship",
+    "category": "Education",
+    "description": "Scholarship support for college students",
+    "is_active": true,
+    "eligibility_rules": {
+      "min_age": 18,
+      "max_age": 30,
+      "student_required": true,
+      "states": ["Karnataka"],
+      "max_income": 300000
+    }
+  },
+  {
+    "name": "Women Entrepreneurship Support",
+    "category": "Business",
+    "description": "Financial assistance for women entrepreneurs",
+    "is_active": true,
+    "eligibility_rules": {
+      "gender": ["female"],
+      "min_age": 21,
+      "states": ["Karnataka", "Tamil Nadu"],
+      "max_income": 500000
+    }
+  },
+  {
+    "name": "Farmer Subsidy Scheme",
+    "category": "Agriculture",
+    "description": "Subsidy for small and medium farmers",
+    "is_active": true,
+    "eligibility_rules": {
+      "occupation_category": ["farmer"],
+      "max_income": 400000,
+      "states": ["Karnataka", "Maharashtra"]
+    }
+  },
+  {
+    "name": "PWD Assistance Program",
+    "category": "Disability",
+    "description": "Monthly support for persons with disabilities",
+    "is_active": true,
+    "eligibility_rules": {
+      "pwd_required": true,
+      "min_age": 18
+    }
+  },
+  {
+    "name": "Minority Education Grant",
+    "category": "Education",
+    "description": "Scholarship for minority students",
+    "is_active": true,
+    "eligibility_rules": {
+      "minority_required": true,
+      "student_required": true,
+      "max_income": 250000
+    }
+  },
+  {
+    "name": "Senior Citizen Pension",
+    "category": "Pension",
+    "description": "Monthly pension for senior citizens",
+    "is_active": true,
+    "eligibility_rules": {
+      "min_age": 60,
+      "bpl_required": true
+    }
+  },
+  {
+    "name": "Urban Housing Support",
+    "category": "Housing",
+    "description": "Housing subsidy for urban BPL families",
+    "is_active": true,
+    "eligibility_rules": {
+      "bpl_required": true,
+      "residence_area": ["urban"]
+    }
+  },
+  {
+    "name": "Rural Housing Scheme",
+    "category": "Housing",
+    "description": "Housing assistance for rural families",
+    "is_active": true,
+    "eligibility_rules": {
+      "bpl_required": true,
+      "residence_area": ["rural"]
+    }
+  },
+  {
+    "name": "Youth Startup Mission",
+    "category": "Startup",
+    "description": "Funding for youth startups",
+    "is_active": true,
+    "eligibility_rules": {
+      "min_age": 18,
+      "max_age": 35,
+      "employment_status": ["unemployed", "self-employed"]
+    }
+  },
+  {
+    "name": "Girl Child Education Support",
+    "category": "Education",
+    "description": "Support for girl child education",
+    "is_active": true,
+    "eligibility_rules": {
+      "gender": ["female"],
+      "student_required": true,
+      "max_age": 25
+    }
+  },
+  {
+    "name": "Healthcare Assistance Scheme",
+    "category": "Healthcare",
+    "description": "Healthcare support for low income families",
+    "is_active": true,
+    "eligibility_rules": {
+      "max_income": 200000,
+      "bpl_required": true
+    }
+  },
+  {
+    "name": "SC/ST Welfare Scholarship",
+    "category": "Education",
+    "description": "Scholarship for SC/ST students",
+    "is_active": true,
+    "eligibility_rules": {
+      "caste_categories": ["SC", "ST"],
+      "student_required": true
+    }
+  },
+  {
+    "name": "Widow Financial Assistance",
+    "category": "Social Welfare",
+    "description": "Financial support for widowed women",
+    "is_active": true,
+    "eligibility_rules": {
+      "gender": ["female"],
+      "distress_status": true,
+      "min_age": 30
+    }
+  },
+  {
+    "name": "Skill Development Mission",
+    "category": "Employment",
+    "description": "Skill training for unemployed youth",
+    "is_active": true,
+    "eligibility_rules": {
+      "employment_status": ["unemployed"],
+      "min_age": 18,
+      "max_age": 35
+    }
+  },
+  {
+    "name": "Startup Seed Grant",
+    "category": "Startup",
+    "description": "Seed funding for innovative startups",
+    "is_active": true,
+    "eligibility_rules": {
+      "min_age": 21,
+      "max_age": 40,
+      "max_income": 1000000
+    }
+  }
+]

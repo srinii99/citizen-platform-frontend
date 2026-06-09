@@ -1,0 +1,116 @@
+export const WORKFLOW_RULES = {
+
+  DRAFT: [
+
+    "PROFILE_PENDING",
+
+    "DOCUMENT_PENDING",
+
+    "STARTED",
+  ],
+
+
+  PROFILE_PENDING: [
+
+    "DOCUMENT_PENDING",
+
+    "STARTED",
+  ],
+
+
+  DOCUMENT_PENDING: [
+
+    "STARTED",
+  ],
+
+
+  STARTED: [
+
+    "SUBMITTED",
+  ],
+
+
+  SUBMITTED: [
+
+    "UNDER_REVIEW",
+
+    "NEEDS_MORE_INFO",
+
+    "REJECTED",
+  ],
+
+
+  UNDER_REVIEW: [
+
+    "DOCUMENT_VERIFIED",
+
+    "NEEDS_MORE_INFO",
+
+    "REJECTED",
+  ],
+
+
+  NEEDS_MORE_INFO: [
+
+    "SUBMITTED",
+  ],
+
+
+  DOCUMENT_VERIFIED: [
+
+   
+
+    "ASSIGNED_TO_AGENCY",
+
+    "FORWARDED_TO_GOVT",
+
+    "REJECTED",
+  ],
+
+
+  ASSIGNED_TO_AGENT: [
+
+  
+    "FORWARDED_TO_GOVT",
+
+    "REJECTED",
+  ],
+
+
+  ASSIGNED_TO_AGENCY: [
+
+    "ASSIGNED_TO_AGENT",
+    "FORWARDED_TO_GOVT",
+ 
+
+    "REJECTED",
+  ],
+
+
+  FORWARDED_TO_GOVT: [
+
+    "GOVT_UNDER_REVIEW",
+
+    "REJECTED",
+  ],
+
+
+  GOVT_UNDER_REVIEW: [
+
+    "APPROVED",
+
+    "REJECTED",
+  ],
+
+
+  APPROVED: [
+
+    "BENEFIT_DISBURSED",
+  ],
+
+
+  BENEFIT_DISBURSED: [],
+
+
+  REJECTED: [],
+};
