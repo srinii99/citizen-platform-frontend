@@ -461,32 +461,110 @@ export const getEligibleSchemes =
 // -------------------------
 
 // ✅ Get all schemes for admin
+
 export const getAllSchemesAdmin =
   async (req, res) => {
 
+
+    console.log("GET ALL SCHMES ADMIN HIT");
+
+
     try {
 
+      const page =
+        Number(req.query.page) || 1;
+
+      const limit =
+        Number(req.query.limit) || 20;
+
+      const search =
+        req.query.search || "";
+
+      const source =
+        req.query.source || "";
+
+      const query = {};
+
+      if (search) {
+
+        query.$or = [
+
+          {
+            title: {
+              $regex: search,
+              $options: "i",
+            },
+          },
+
+          {
+            ministry: {
+              $regex: search,
+              $options: "i",
+            },
+          },
+
+          {
+            department: {
+              $regex: search,
+              $options: "i",
+            },
+          },
+        ];
+      }
+
+      if (source) {
+
+        query.source =
+          source;
+      }
+
+      const total =
+        await Scheme.countDocuments(
+          query
+        );
+
       const schemes =
-        await Scheme.find()
+        await Scheme.find(query)
+
           .sort({
             createdAt: -1,
-          });
+          })
 
-      return res.status(200).json({
+          .skip(
+            (page - 1) * limit
+          )
+
+          .limit(limit);
+
+      return res.json({
 
         success: true,
 
         data: schemes,
+
+        pagination: {
+
+          page,
+
+          limit,
+
+          total,
+
+          totalPages:
+            Math.ceil(
+              total / limit
+            ),
+        },
       });
 
-    } catch (err) {
+    } catch (error) {
 
       return res.status(500).json({
 
         success: false,
 
         error:
-          err.message,
+          error.message,
       });
     }
   };

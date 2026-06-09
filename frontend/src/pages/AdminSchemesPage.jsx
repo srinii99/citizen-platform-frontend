@@ -17,6 +17,8 @@ import {
 
 function AdminSchemesPage() {
 
+  console.log("ADMIN SCHEMES PAGE LOADED");
+
   const [schemes,
     setSchemes] =
       useState([]);
@@ -24,6 +26,21 @@ function AdminSchemesPage() {
   const [loading,
     setLoading] =
       useState(true);
+
+  const [searchTerm, 
+    setSearchTerm] =
+      useState("");
+
+  const [currentPage,
+    setCurrentPage] =
+      useState(1);
+
+  const [pagination,
+    setPagination] =
+      useState(null);
+
+  const schemesPerPage =
+    20;
 
   const [editingScheme,
     setEditingScheme] =
@@ -70,7 +87,7 @@ function AdminSchemesPage() {
 
     fetchSchemes();
 
-  }, []);
+  }, [currentPage]);
 
   const fetchSchemes =
     async () => {
@@ -78,11 +95,28 @@ function AdminSchemesPage() {
       try {
 
         const response =
-          await getAdminSchemes();
+          await getAdminSchemes(
+            currentPage,
+            20,
+            searchTerm
+          );
+
+        console.log("SCHEMES RESPONSE : ");
+        console.log(response);
+
+        setPagination(
+          response.pagination
+        );
+
 
         setSchemes(
-          response.data
+          Array.isArray(response.data)
+            ? response.data
+            : []
         );
+        console.log("SCHEMES LENGTH:");
+        console.log(response.data.length);
+        console.log("IS ARRAY : ", Array.isArray(response.data));
 
       } catch (err) {
 
@@ -181,12 +215,30 @@ function AdminSchemesPage() {
 
       try {
 
+      
+        const payload = {
+
+          ...form,
+
+          eligibilityRules:
+            form.eligibility,
+        };
+
+        delete payload.eligibility;
+
+        console.log(
+          "UPDATE PAYLOAD"
+        );
+
+        console.log(payload);
+
         await updateScheme(
 
           editingScheme._id,
 
-          form
+          payload
         );
+
 
         alert(
           "Scheme updated"
@@ -198,7 +250,10 @@ function AdminSchemesPage() {
 
       } catch (err) {
 
+        console.log("UPDATE ERROR");
+
         console.log(err);
+        console.log(err.response?.data);
 
         alert(
           "Update failed"
@@ -235,6 +290,8 @@ function AdminSchemesPage() {
       }
     };
 
+
+
   // -------------------------
   // LOADING
   // -------------------------
@@ -251,6 +308,28 @@ function AdminSchemesPage() {
     );
   }
 
+  
+  const filteredSchemes =
+    schemes.filter((scheme) =>
+
+      scheme.title
+        ?.toLowerCase()
+        .includes(
+          searchTerm.toLowerCase()
+        )
+    );
+
+
+  const totalPages =
+    pagination?.totalPages || 1;
+
+ 
+
+
+ 
+
+
+
   // -------------------------
   // UI
   // -------------------------
@@ -264,6 +343,24 @@ function AdminSchemesPage() {
         Scheme Management
 
       </h1>
+
+    <div className="mb-6">
+
+      <input
+        type="text"
+        placeholder="Search schemes..."
+        value={searchTerm}
+        onChange={(e) => {
+          setSearchTerm(
+            e.target.value
+          );
+          
+        }}
+     
+        className="w-full md:w-96 border rounded-lg px-4 py-3"
+      />
+
+    </div>
 
       {/* FORM */}
 
@@ -670,181 +767,242 @@ function AdminSchemesPage() {
                 Actions
               </th>
 
+
             </tr>
 
           </thead>
 
+      
           <tbody>
 
-            {
-              schemes.map(
-                (scheme) => (
+            
+            {filteredSchemes.map((scheme) => (
 
-                  <tr
-                    key={
-                      scheme._id
-                    }
-                    className="border-t"
+             
+              <tr
+                key={scheme._id}
+                className="border-t"
+              >
+
+                <td className="p-4">
+                  {scheme.title}
+                </td>
+
+                <td className="p-4">
+                  {scheme.department}
+                </td>
+
+                {/* STATUS */}
+
+                <td className="p-4">
+
+                  <span
+                    className={`px-3 py-1 rounded-full text-sm font-medium ${
+                      scheme.status === "ACTIVE"
+                        ? "bg-green-100 text-green-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
                   >
+                    {scheme.status}
+                  </span>
 
-                    <td className="p-4">
+                </td>
 
-                      {
-                        scheme.title
-                      }
+                {/* ACTIONS */}
 
-                    </td>
+                <td className="p-4 flex gap-2">
 
-                    <td className="p-4">
+                  {/* EDIT */}
 
-                      {
-                        scheme.department
-                      }
+                  <button
+                    onClick={() => {
 
-                    </td>
+                      setEditingScheme(
+                        scheme
+                      );
 
-                    <td className="p-4">
+                      setForm({
 
-                      <span
-                        className={`px-3 py-1 rounded-full text-sm font-medium ${
-                          scheme.status ===
-                          "ACTIVE"
+                        title:
+                          scheme.title || "",
 
-                            ? "bg-green-100 text-green-700"
+                        description:
+                          scheme.description || "",
 
-                            : "bg-red-100 text-red-700"
-                        }`}
-                      >
+                        department:
+                          scheme.department || "",
 
-                        {
-                          scheme.status
-                        }
+                        benefits:
+                          scheme.benefits || "",
 
-                      </span>
+                        application_fee:
+                          scheme.application_fee || 0,
 
-                    </td>
+                        status:
+                          scheme.status || "ACTIVE",
 
-                    <td className="p-4 flex gap-2">
+                        eligibility: {
 
-                      {/* EDIT */}
+                          min_age:
+                            scheme.eligibilityRules?.min_age ?? 18,
 
-                      <button
-                        onClick={() => {
+                          max_age:
+                            scheme.eligibilityRules?.max_age ?? 60,
 
-                          setEditingScheme(
-                            scheme
-                          );
+                          max_income:
+                            scheme.eligibilityRules?.max_income ?? 500000,
 
-                          setForm({
+                          gender:
+                            scheme.eligibilityRules?.gender ?? "ANY",
 
-                            title:
-                              scheme.title,
+                          caste:
+                            scheme.eligibilityRules?.caste ?? "ANY",
 
-                            description:
-                              scheme.description,
+                          occupation:
+                            scheme.eligibilityRules?.occupation ?? "ANY",
 
-                            department:
-                              scheme.department,
+                          state:
+                            scheme.eligibilityRules?.state ?? "ANY",
+                        },
+                      });
 
-                            benefits:
-                              scheme.benefits,
+                    }}
 
-                            application_fee:
-                              scheme.application_fee,
+                    className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded"
+                  >
+                    Edit
+                  </button>
+
+                  {/* ACTIVATE / DEACTIVATE */}
+
+                  <button
+                    onClick={async () => {
+
+              
+
+                      try {
+
+                        await updateScheme(
+
+                          scheme._id,
+
+                          {
 
                             status:
-                              scheme.status,
-
-                            eligibility:
-                              scheme.eligibility,
-                          });
-                        }}
-
-                        className="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-lg"
-                      >
-
-                        Edit
-
-                      </button>
-
-                      {/* TOGGLE STATUS */}
-
-                      <button
-                        onClick={async () => {
-
-                          try {
-
-                            await updateScheme(
-
-                              scheme._id,
-
-                              {
-
-                                status:
-                                  scheme.status ===
-                                  "ACTIVE"
-
-                                    ? "INACTIVE"
-
-                                    : "ACTIVE",
-                              }
-                            );
-
-                            fetchSchemes();
-
-                          } catch (err) {
-
-                            console.log(err);
+                              scheme.status === "ACTIVE"
+                                ? "INACTIVE"
+                                : "ACTIVE",
                           }
-                        }}
+                        );
 
-                        className={`px-4 py-2 rounded-lg text-white ${
-                          scheme.status ===
-                          "ACTIVE"
+                        fetchSchemes();
 
-                            ? "bg-yellow-500"
+                      } catch (err) {
 
-                            : "bg-green-600"
-                        }`}
-                      >
+                        console.log(err);
+                      }
+                    }}
 
-                        {
-                          scheme.status ===
-                          "ACTIVE"
+                    className={`px-4 py-2 rounded text-white ${
+                      scheme.status === "ACTIVE"
+                        ? "bg-yellow-500"
+                        : "bg-green-600"
+                    }`}
+                  >
 
-                            ? "Deactivate"
+                    {
+                      scheme.status === "ACTIVE"
+                        ? "Deactivate"
+                        : "Activate"
+                    }
 
-                            : "Activate"
-                        }
+                
+                  </button>
 
-                      </button>
+                  {/* DELETE */}
 
-                      {/* DELETE */}
+                  <button
+                    onClick={() =>
+                      handleDelete(
+                        scheme._id
+                      )
+                    }
 
-                      <button
-                        onClick={() =>
-                          handleDelete(
-                            scheme._id
-                          )
-                        }
+                    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                  >
+                    Delete
+                  </button>
 
-                        className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg"
-                      >
+               
 
-                        Delete
+                </td>
 
-                      </button>
 
-                    </td>
+              </tr>
+                
 
-                  </tr>
-                )
-              )
-            }
+            ))}
 
           </tbody>
 
+          
+
+
+                    
+
         </table>
+
+      </div>
+
+      <div className="flex justify-center items-center gap-4 mt-6">
+
+        <button
+
+          disabled={
+            currentPage === 1
+          }
+
+          onClick={() =>
+            setCurrentPage(
+              currentPage - 1
+            )
+          }
+
+          className="bg-gray-200 px-4 py-2 rounded disabled:opacity-50"
+        >
+
+          Previous
+
+        </button>
+
+        <span>
+
+          Page {currentPage}
+          {" "}
+          of
+          {" "}
+          {totalPages}
+
+        </span>
+
+        <button
+
+          disabled={
+            currentPage === totalPages
+          }
+
+          onClick={() =>
+            setCurrentPage(
+              currentPage + 1
+            )
+          }
+
+          className="bg-gray-200 px-4 py-2 rounded disabled:opacity-50"
+        >
+
+          Next
+
+        </button>
 
       </div>
 

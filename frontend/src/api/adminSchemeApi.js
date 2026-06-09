@@ -5,16 +5,38 @@ from "./api";
 // GET ALL SCHEMES
 // -------------------------
 
+
 export const getAdminSchemes =
-  async () => {
+  async (
+
+    page = 1,
+
+    limit = 20,
+
+    search = ""
+
+  ) => {
 
     const response =
       await api.get(
-        "/admin/schemes"
+
+        "/admin/schemes",
+
+        {
+          params: {
+
+            page,
+
+            limit,
+
+            search,
+          },
+        }
       );
 
     return response.data;
   };
+
 
 // -------------------------
 // CREATE SCHEME

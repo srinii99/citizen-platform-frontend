@@ -205,5 +205,16 @@ router.delete(
   deleteScheme
 );
 
+router.get(
+  "/test",
+  (req, res) => {
+
+    res.json({
+      success: true,
+      message: "Admin route working"
+    });
+
+  }
+);
 
 export default router;
