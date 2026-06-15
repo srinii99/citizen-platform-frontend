@@ -180,6 +180,43 @@ const applicationSchema =
         },
       ],
 
+      notifications: [
+
+        {
+          status: {
+            type: String,
+          },
+
+          channel: {
+            type: String,
+
+            enum: [
+              "WHATSAPP",
+              "SMS",
+              "EMAIL",
+            ],
+
+            default: "WHATSAPP",
+          },
+
+          sent_at: {
+            type: Date,
+            default: Date.now,
+          },
+
+          delivery_status: {
+            type: String,
+
+            enum: [
+              "SENT",
+              "FAILED",
+            ],
+
+            default: "SENT",
+          },
+        },
+      ],
+
       payment_status: {
         type: String,
 
@@ -206,6 +243,19 @@ const applicationSchema =
         type: String,
         default: "",
       },
+
+
+      required_documents: [
+        {
+          document_name: String,
+          document_type: String,
+
+          mandatory: {
+            type: Boolean,
+            default: true,
+          },
+        },
+      ],
 
  
 

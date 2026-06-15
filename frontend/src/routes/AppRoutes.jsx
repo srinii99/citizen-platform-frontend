@@ -71,6 +71,11 @@ from "../pages/AdminSchemeSourcesPage";
 import AdminSourceConfigPage
 from "../pages/AdminSourceConfigPage";
 
+import AdminImportMonitoringPage
+from "../pages/AdminImportMonitoringPage";
+
+
+
 
 
 function AppRoutes() {
@@ -280,6 +285,17 @@ function AppRoutes() {
             <AdminRoute>
               <DashboardLayout>
                 <AdminSourceConfigPage />
+              </DashboardLayout>
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/import-monitoring"
+          element={
+            <AdminRoute>
+              <DashboardLayout>
+                <AdminImportMonitoringPage />
               </DashboardLayout>
             </AdminRoute>
           }

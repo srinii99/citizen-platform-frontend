@@ -4,10 +4,13 @@ from "express";
 import {
 
   verifyWebhook,
-
   receiveMessage,
+  getConversation,
+  testFlow,
 
 } from "./whatsapp.controller.js";
+
+
 
 
 const router =
@@ -31,6 +34,18 @@ router.get(
 router.post(
   "/webhook",
   receiveMessage
+);
+
+
+
+router.get(
+  "/conversations/:phoneNumber",
+  getConversation
+);
+
+router.post(
+  "/test-flow",
+  testFlow
 );
 
 

@@ -159,3 +159,16 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+// Test route
+app.get("/", (req, res) => {
+  res.send("API Running 🚀");
+});
+
+// Temporary WhatsApp ENV Test
+app.get("/test-whatsapp-env", (req, res) => {
+  res.json({
+    verifyToken:
+      process.env.WHATSAPP_VERIFY_TOKEN,
+  });
+});

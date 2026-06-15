@@ -1,7 +1,10 @@
-
+import { detectSchemeState }
+from "../../scheme/utils/stateDetector.js";
 
 export const transformMySchemeRecord =
   async (rawRecord) => {
+
+
 
     const data = rawRecord.rawData?.en;
 
@@ -34,6 +37,45 @@ export const transformMySchemeRecord =
     const applicationUrl =
       application?.[0]?.url || "";
 
+    const officialWebsite =
+      content.references?.find(
+        ref => ref.url
+      )?.url || "";
+
+    const detectedState =
+      detectSchemeState({
+
+        title:
+          basic.schemeName || "",
+
+        description:
+          content.briefDescription || "",
+
+        detailedDescription:
+          content.detailedDescription_md || "",
+
+        eligibility:
+          eligibility.eligibilityDescription_md || "",
+
+        department:
+          basic.nodalDepartmentName?.label || "",
+
+        officialWebsite
+      });
+
+    if (detectedState) {
+      console.log(
+        `[STATE DETECTED] ${
+          basic.schemeName
+        } -> ${detectedState}`
+      );
+    }
+
+    console.log({
+      title: basic.schemeName,
+      detectedState,
+    });
+
     const scheme = {
       source: "MYSCHEME",
 
@@ -59,14 +101,13 @@ export const transformMySchemeRecord =
       department:
         basic.nodalDepartmentName?.label || "",
 
-      level:
-        basic.level?.label || "",
 
       categories,
 
       beneficiaries,
 
-      Description:
+
+      description:
         content.briefDescription || "",
 
       detailedDescription:
@@ -76,11 +117,24 @@ export const transformMySchemeRecord =
         content.benefits_md || "",
 
 
-
-      eligibilityText:
+      eligibility:
         eligibility.eligibilityDescription_md || "",
 
       applicationUrl,
+
+      officialWebsite,
+
+        // NEW
+
+      schemeScope:
+        detectedState
+          ? "STATE"
+          : "CENTRAL",
+
+      applicableStates:
+        detectedState
+          ? [detectedState]
+          : [],
 
       tags:
         basic.tags || [],
@@ -98,9 +152,10 @@ export const transformMySchemeRecord =
               basic.schemeCloseDate
             )
           : null,
+    
 
-      sourceDataId:
-        rawRecord._id,
+
+  
     };
 
     return scheme;

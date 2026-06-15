@@ -2,9 +2,10 @@
 import { User }
 from "../user/user.model.js";
 
-import {
-  WhatsAppMessage,
-} from "./whatsappMessage.model.js";
+
+
+import WhatsAppMessage
+from "./whatsappMessage.model.js";
 
 import {
   sendWhatsAppMessage,
@@ -33,6 +34,45 @@ import {
 } from "./whatsappMedia.service.js";
 
 
+import {
+  getConversationHistory,
+} from "./whatsappConversation.service.js";
+
+import { whatsappConfig }
+from "./whatsapp.config.js";
+
+import {
+  extractWhatsAppMessage,
+} from "./whatsappValidator.js";
+
+import {
+  getOrCreateSession,
+  updateStep,
+} from "./whatsappSessionService.js";
+
+import {
+  processIncomingMessage,
+} from "./whatsappFlowService.js";
+
+import {
+  getMessageForStep,
+} from "./whatsappMessageRouter.js";
+
+
+import {
+  sendWhatsAppResponse,
+} from "./whatsappResponseService.js";
+
+import {
+  buildViewSchemesButton,
+} from "./helpers/interactiveMessages.js";
+
+
+
+
+const USE_SPRINT10_FLOW = true;
+
+
 // -------------------------
 // VERIFY WEBHOOK
 // -------------------------
@@ -40,8 +80,7 @@ import {
 export const verifyWebhook =
   async (req, res) => {
 
-    const VERIFY_TOKEN =
-      "setunxt_verify_token";
+    
 
 
     const mode =
@@ -60,13 +99,15 @@ export const verifyWebhook =
       ];
 
 
+
+
     if (
       mode === "subscribe" &&
-      token === VERIFY_TOKEN
+      token === whatsappConfig.verifyToken
     ) {
 
-      console.log(
-        "WhatsApp webhook verified"
+      whatsappLog(
+        "Webhook verified"
       );
 
       return res.status(200)
@@ -77,12 +118,49 @@ export const verifyWebhook =
   };
 
 
+
+
+
+export const getConversation = async (
+  req,
+  res
+) => {
+
+  try {
+
+    const { phoneNumber } =
+      req.params;
+
+    const conversation =
+      await getConversationHistory(
+        phoneNumber
+      );
+
+    return res.status(200).json({
+      success: true,
+      data: conversation,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to fetch conversation",
+    });
+  }
+};
+
 // -------------------------
 // RECEIVE MESSAGES
 // -------------------------
 
 export const receiveMessage =
   async (req, res) => {
+
+
 
     try {
 
@@ -96,17 +174,16 @@ export const receiveMessage =
       );
 
 
-      const entry =
-        req.body.entry?.[0];
-
-      const changes =
-        entry?.changes?.[0];
-
-      const value =
-        changes?.value;
-
-      const message =
-        value?.messages?.[0];
+     
+      const {
+        entry,
+        change,
+        value,
+        message,
+      } = extractWhatsAppMessage(
+        req.body
+      );
+    
 
 
       // -------------------------
@@ -123,12 +200,35 @@ export const receiveMessage =
 
       const text =
         message.text?.body || "";
+
+      if (
+        !message.text &&
+        !message.image &&
+        !message.document
+      ) {
+
+        console.log(
+          "[WHATSAPP] Unsupported message type"
+        );
+
+        return res.sendStatus(200);
+      }
       
       const image =
         message.image;
 
       const document =
         message.document;
+
+      console.log(
+        "IMAGE:",
+        JSON.stringify(image, null, 2)
+      );
+
+      console.log(
+        "DOCUMENT:",
+        JSON.stringify(document, null, 2)
+      );
 
 
       // -------------------------
@@ -161,19 +261,114 @@ export const receiveMessage =
       // SAVE MESSAGE
       // -------------------------
 
+
       await WhatsAppMessage.create({
 
-        mobile,
+        phoneNumber:
+          mobile,
 
-        incoming_message:
+        direction:
+          "inbound",
+
+        message:
           text,
 
-        whatsapp_message_id:
-          message.id,
-
-        raw_payload:
-          req.body,
+        status:
+          "received",
       });
+
+
+// -------------------------
+// SPRINT 10 FEATURE FLAG
+// -------------------------
+
+    if (USE_SPRINT10_FLOW) {
+
+      console.log(
+        "[SPRINT10 FLOW ENABLED]"
+      );
+
+      const session =
+        await getOrCreateSession(
+          mobile
+        );
+
+      const THIRTY_DAYS =
+        30 * 24 * 60 * 60 * 1000;
+
+      if (
+        session.lastMessageAt &&
+        (
+          Date.now() -
+          new Date(session.lastMessageAt).getTime()
+        ) > THIRTY_DAYS
+      ) {
+
+        session.currentStep =
+          WHATSAPP_STEPS.WELCOME;
+
+        session.selectedSchemeId =
+          null;
+
+        session.applicationId =
+          null;
+
+        session.currentDocumentIndex =
+          0;
+
+        session.eligibleSchemes = [];
+
+        await session.save();
+      }
+
+      const result =
+        await processIncomingMessage({
+          session,
+          phoneNumber: mobile,
+          message:text,
+        });
+
+      if (result?.nextStep) {
+
+        await updateStep(
+          mobile,
+          result.nextStep
+        );
+
+       
+        let nextMessage;
+
+          if (result.schemeMessage) {
+
+            nextMessage = {
+              type: "text",
+              text: {
+                body: result.schemeMessage,
+              },
+            };
+
+          } else {
+
+            nextMessage =
+              getMessageForStep(
+                result.nextStep
+              );
+          }
+
+          console.log(
+            "SPRINT10 RESULT:",
+            result
+          );
+
+          await sendWhatsAppResponse(
+            mobile,
+            nextMessage
+          );
+     
+      }
+
+      return res.sendStatus(200);
+    }
 
 
       // -------------------------
@@ -275,8 +470,25 @@ export const receiveMessage =
         // -------------------------
 
         case FLOW_STATES.AGE_CAPTURE: {
+          
+          const age = Number(text);
 
-          user.age = Number(text);
+          if (isNaN(age)) {
+
+       
+
+            await sendWhatsAppMessage(
+              mobile,
+              "Please enter a valid age."
+            );
+
+       
+
+            return res.sendStatus(200);
+          }
+
+          user.age = age;
+
 
           await user.save();
 
@@ -632,6 +844,11 @@ export const receiveMessage =
 
             await application.save();
 
+            import {
+              sendApplicationNotification,
+            }
+            from "../whatsapp/whatsappNotificationService.js";
+
 
             user.whatsapp_flow_state =
               FLOW_STATES.COMPLETED;
@@ -706,3 +923,127 @@ export const receiveMessage =
       return res.sendStatus(500);
     }
   };
+
+export const testFlow = async (
+  req,
+  res
+) => {
+
+  console.log(
+    "REQUEST BODY:",
+    req.body
+  );
+
+  try {
+
+    const {
+      phoneNumber,
+      message,
+    } = req.body;
+
+    console.log("PHONE NUMBER :", phoneNumber);
+
+    const session =
+      await getOrCreateSession(
+        phoneNumber
+      );
+
+   
+    const result =
+      await processIncomingMessage({
+        session,
+        phoneNumber,
+        message,
+      });
+
+    if (result?.type) {
+
+      await sendWhatsAppResponse(
+        phoneNumber,
+        result
+      );
+
+      return res.json({
+        success: true,
+        result,
+        messageSent: true,
+      });
+    }
+
+    if (result?.nextStep) {
+
+      await updateStep(
+        phoneNumber,
+        result.nextStep
+      );
+
+      let nextMessage;
+
+      if (
+        result.nextStep ===
+        "SCHEME_SELECTION"
+      ) {
+
+        const updatedSession =
+          await getOrCreateSession(
+            phoneNumber
+          );
+
+        nextMessage =
+          buildViewSchemesButton(
+            updatedSession.eligibleSchemes.length
+          );
+
+      } else if (
+        result.schemeMessage
+      ) {
+
+        nextMessage = {
+          type: "text",
+          text: {
+            body:
+              result.schemeMessage,
+          },
+        };
+
+      } else {
+
+        nextMessage =
+          getMessageForStep(
+            result.nextStep
+          );
+      }
+
+      await sendWhatsAppResponse(
+        phoneNumber,
+        nextMessage
+      );
+
+      return res.json({
+        success: true,
+        session,
+        result,
+        nextMessage,
+        messageSent: true,
+      });
+    }
+
+    return res.json({
+      success: true,
+      result,
+    });
+
+  } catch (error) {
+
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      error: error.message,
+    });
+  }
+};
+
+
+
+

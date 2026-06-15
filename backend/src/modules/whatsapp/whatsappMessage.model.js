@@ -1,49 +1,41 @@
-import mongoose
-from "mongoose";
+import mongoose from "mongoose";
 
 const whatsappMessageSchema =
   new mongoose.Schema(
 
     {
 
-      mobile: {
+      phoneNumber: {
 
         type: String,
 
         required: true,
       },
 
-      message_type: {
+      direction: {
 
         type: String,
 
-        default: "TEXT",
+        enum: [
+          "inbound",
+          "outbound",
+        ],
+
+        required: true,
       },
 
-      incoming_message: {
+      message: {
 
         type: String,
 
-        default: "",
+        required: true,
       },
 
-      whatsapp_message_id: {
+      status: {
 
         type: String,
 
-        default: "",
-      },
-
-      language: {
-
-        type: String,
-
-        default: "EN",
-      },
-
-      raw_payload: {
-
-        type: Object,
+        default: "received",
       },
 
     },
@@ -54,11 +46,20 @@ const whatsappMessageSchema =
     }
   );
 
+  whatsappMessageSchema.index({
+    phoneNumber: 1,
+  });
 
-export const WhatsAppMessage =
-  mongoose.model(
+  whatsappMessageSchema.index({
+    createdAt: 1,
+  });
 
-    "WhatsAppMessage",
+  whatsappMessageSchema.index({
+    phoneNumber: 1,
+    createdAt: 1,
+  });
 
-    whatsappMessageSchema
-  );
+export default mongoose.model(
+  "WhatsAppMessage",
+  whatsappMessageSchema
+);

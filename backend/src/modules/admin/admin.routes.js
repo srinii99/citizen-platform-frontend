@@ -47,6 +47,13 @@ import {
 } from "../../middleware/role.middleware.js";
 
 
+import {
+  getImportMonitoringSummary,
+  getRecentImportJobs,
+}
+from "./importMonitoringController.js";
+
+
 const router =
   express.Router();
 
@@ -63,6 +70,8 @@ const ADMIN_ACCESS = [
 
   "EXECUTIVE",
 ];
+
+
 
 
 // -----------------------------------
@@ -215,6 +224,16 @@ router.get(
     });
 
   }
+);
+
+router.get(
+  "/import-monitoring",
+  getImportMonitoringSummary
+);
+
+router.get(
+  "/import-monitoring/history",
+  getRecentImportJobs
 );
 
 export default router;

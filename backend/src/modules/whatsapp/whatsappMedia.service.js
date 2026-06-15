@@ -81,6 +81,12 @@ export const downloadWhatsAppMedia =
           },
         });
 
+      if (!fs.existsSync("uploads")) {
+        fs.mkdirSync("uploads", {
+          recursive: true,
+        });
+      }
+
 
       const uploadPath =
         path.join(

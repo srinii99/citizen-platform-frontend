@@ -13,6 +13,11 @@ import {
 } from "./recommendedSchemes.controller.js";
 
 import {
+  getRecommendations,
+}
+from "./controllers/recommendation.controller.js";
+
+import {
   authMiddleware,
 } from "../../middleware/auth.middleware.js";
 
@@ -46,12 +51,20 @@ router.get(
   searchSchemes
 );
 
+router.get(
+  "/recommendations",
+  authMiddleware,
+  getRecommendations
+);
+
 
 router.get(
   "/:id",
   authMiddleware,
   getSchemeById
 );
+
+
 
 
 

@@ -194,6 +194,18 @@ const schemeSchema =
       },
     },
 
+    // NEW FIELDS
+
+    schemeScope: {
+      type: String,
+      enum: ["CENTRAL", "STATE"],
+      default: "CENTRAL",
+    },
+
+    applicableStates: [{
+      type: String,
+    }],
+
      
 
   }, {
