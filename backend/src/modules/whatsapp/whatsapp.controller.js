@@ -63,6 +63,10 @@ import {
   sendWhatsAppResponse,
 } from "./whatsappResponseService.js";
 
+ import {
+    sendApplicationNotification,
+}   from "../whatsapp/whatsappNotificationService.js";
+
 import {
   buildViewSchemesButton,
 } from "./helpers/interactiveMessages.js";
@@ -844,10 +848,7 @@ export const receiveMessage =
 
             await application.save();
 
-            import {
-              sendApplicationNotification,
-            }
-            from "../whatsapp/whatsappNotificationService.js";
+           
 
 
             user.whatsapp_flow_state =

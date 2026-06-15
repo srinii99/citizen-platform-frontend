@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Agent from "../agents/agent.model.js";
 
 const agentSchema = new mongoose.Schema(
   {
@@ -48,6 +49,11 @@ const agentSchema = new mongoose.Schema(
     },
 
     state: {
+      type: String,
+      trim: true,
+    },
+
+    territory: {
       type: String,
       trim: true,
     },

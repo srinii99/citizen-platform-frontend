@@ -57,10 +57,10 @@ import CompleteProfilePage
 from "../pages/CompleteProfilePage";
 
 import AgentDashboardPage
-from "../pages/AgentDashboardPage";
+from "../pages/agent/AgentDashboardPage";
 
 import AgencyDashboardPage
-from "../pages/AgencyDashboardPage";
+from "../pages/agency/AgencyDashboardPage";
 
 import AdminApplicationDocumentsPage
 from "../pages/AdminApplicationDocumentsPage";
@@ -73,6 +73,9 @@ from "../pages/AdminSourceConfigPage";
 
 import AdminImportMonitoringPage
 from "../pages/AdminImportMonitoringPage";
+
+import AgencyApplicationsPage
+from "../pages/agency/AgencyApplicationsPage";
 
 
 
@@ -301,6 +304,14 @@ function AppRoutes() {
           }
         />
 
+        <Route
+          path="/agency/applications"
+          element={
+            <AgencyApplicationsPage />
+          }
+        />
+
+ 
 
 
 

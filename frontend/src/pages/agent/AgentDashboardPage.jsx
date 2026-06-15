@@ -3,10 +3,10 @@ import {
   useState,
 } from "react";
 
-import api from "../api/axios";
+import api from "../../api/axios";
 
 
-const AgencyDashboardPage =
+const AgentDashboardPage =
   () => {
 
     const [
@@ -33,7 +33,7 @@ const AgencyDashboardPage =
           const res =
             await api.get(
 
-              "/api/applications/agency/my-applications"
+              "/api/applications/agent/my-applications"
             );
 
           setApplications(
@@ -53,7 +53,7 @@ const AgencyDashboardPage =
 
         <h1 className="text-2xl font-bold mb-6">
 
-          Agency Dashboard
+          Agent Dashboard
 
         </h1>
 
@@ -107,4 +107,4 @@ const AgencyDashboardPage =
     );
   };
 
-export default AgencyDashboardPage;
+export default AgentDashboardPage;

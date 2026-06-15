@@ -134,3 +134,125 @@ export const deactivateAgent =
       });
     }
   };
+
+export const getAgentDashboard =
+  async (req, res) => {
+
+    try {
+
+      const dashboard =
+        await agentService.getAgentDashboard(
+          req.params.id
+        );
+
+      return res.json({
+        success: true,
+        data: dashboard,
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Failed to fetch dashboard",
+      });
+    }
+  };
+
+export const getAgentApplications =
+  async (req, res) => {
+
+    try {
+
+      const applications =
+        await agentService.getAgentApplications(
+          req.params.id
+        );
+
+      return res.json({
+        success: true,
+        data: applications,
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      return res.status(500).json({
+        success: false,
+        message:
+          "Failed to fetch applications",
+      });
+    }
+  };
+
+export const addAgentRemark =
+  async (req, res) => {
+
+    try {
+
+      const {
+        agentId,
+        remark,
+      } = req.body;
+
+      const application =
+        await agentService.addAgentRemark(
+          req.params.id,
+          agentId,
+          remark
+        );
+
+      return res.json({
+        success: true,
+        data: application,
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      return res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+    }
+  };
+
+export const updateApplicationStatus =
+  async (req, res) => {
+
+    try {
+
+      const {
+        status,
+        remarks,
+      } = req.body;
+
+      const application =
+        await agentService.updateApplicationStatus(
+          req.params.id,
+          status,
+          remarks
+        );
+
+      return res.json({
+        success: true,
+        data: application,
+      });
+
+    } catch (error) {
+
+      console.error(error);
+
+      return res.status(500).json({
+        success: false,
+        message:
+          error.message,
+      });
+    }
+  };

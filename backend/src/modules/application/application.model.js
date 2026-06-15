@@ -45,6 +45,34 @@ const applicationSchema =
         default: null,
       },
 
+      assigned_by: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+        default: null,
+      },
+
+      assigned_agency_at: {
+        type: Date,
+      },
+
+      assigned_agent_at: {
+        type: Date,
+      },
+
+      current_owner_type: {
+        type: String,
+        enum: [
+          "ADMIN",
+          "AGENCY",
+          "AGENT",
+          "GOVT",
+        ],
+        default: "ADMIN",
+      },
+
+  
+
+
 
       // -------------------------
       // WORKFLOW TYPE
@@ -155,30 +183,71 @@ const applicationSchema =
         default: "STARTED",
       },
 
+   
+  
       status_history: [
-
         {
+          status: String,
 
-          status: {
-
-            type: String,
-          },
-
-          admin_remarks: {
-            type: String,
-            default: "",
-          },
+          admin_remarks: String,
 
           updated_at: {
-
             type: Date,
-
             default: Date.now,
           },
-
-     
         },
       ],
+
+      agent_remarks: [
+        {
+          remark: String,
+
+          created_by: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Agent",
+          },
+
+          created_at: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+
+      assignment_history: [
+        {
+          from_owner_type: String,
+
+          to_owner_type: String,
+
+          agency_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Agency",
+          },
+
+          agent_id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Agent",
+          },
+
+          remarks: String,
+
+          assigned_at: {
+            type: Date,
+            default: Date.now,
+          },
+        },
+      ],
+
+
+       
+    
+      
+
+
+
+
+     
 
       notifications: [
 
@@ -339,7 +408,7 @@ const applicationSchema =
     }
   );
 
-  
+
 
 export const Application =
   mongoose.model(

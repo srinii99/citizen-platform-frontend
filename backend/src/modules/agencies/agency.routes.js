@@ -14,6 +14,31 @@ router.get(
   agencyController.getAgencies
 );
 
+router.post(
+  "/assign-application",
+  agencyController.assignApplicationToAgency
+);
+
+router.post(
+  "/assign-agent",
+  agencyController.assignAgent
+);
+
+router.get(
+  "/:id/dashboard",
+  agencyController.getAgencyDashboard
+);
+
+router.get(
+  "/:id/agents",
+  agencyController.getAgencyAgents
+);
+
+router.get(
+  "/:id/applications",
+  agencyController.getAgencyApplications
+);
+
 router.get(
   "/:id",
   agencyController.getAgencyById
