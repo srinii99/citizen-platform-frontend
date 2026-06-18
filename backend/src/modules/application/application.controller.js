@@ -108,10 +108,16 @@ export const getApplicationById =
 
     try {
 
+
       const application =
         await Application.findById(
           req.params.id
-        ).populate("scheme_id");
+        )
+          .populate("user_id")
+          .populate("scheme_id")
+          .populate("assigned_agency_id")
+          .populate("assigned_agent_id");
+
 
       if (!application) {
 
@@ -565,6 +571,69 @@ export const updateApplicationStatus =
 
       application.status =
         status;
+
+      if (
+        status ===
+        "FORWARDED_TO_GOVT"
+      ) {
+
+        application.govt_department =
+          req.body.govt_department || "";
+
+        application.govt_reference_number =
+          req.body.govt_reference_number || "";
+
+        application.govt_status =
+          "PENDING";
+
+        application.forwarded_to_govt_at =
+          new Date();
+      }
+
+      if (
+        status ===
+        "GOVT_UNDER_REVIEW"
+      ) {
+
+        application.govt_status =
+          "UNDER_REVIEW";
+
+        application.govt_under_review_at=
+          new Date();
+      }
+
+      if (
+        status ===
+        "APPROVED"
+      ) {
+
+        application.govt_status =
+          "APPROVED";
+
+        application.approved_at =
+          new Date();
+      }
+
+      if (
+        status ===
+        "REJECTED"
+      ) {
+
+        application.govt_status =
+          "REJECTED";
+
+        application.rejected_at =
+         new Date();
+      }
+
+      if (
+        status ===
+        "BENEFIT_DISBURSED"
+      ) {
+
+        application.benefit_disbursed_at =
+          new Date();
+      }
 
       if (
         status ===
@@ -1197,4 +1266,97 @@ export const getDocumentViewUrl =
 
 
   };
+
+
+export const getGovernmentQueue =
+  async (req, res) => {
+
+
+
+    try {
+
+      const filter =
+        req.query.filter || "ALL";
+
+      let statuses = [];
+
+      switch (filter) {
+
+  
+
+        case "APPROVED":
+          statuses = ["APPROVED"];
+          break;
+        
+        case "REJECTED":
+          statuses = ["REJECTED"];
+          break;
+
+        case "BENEFIT_DISBURSED":
+          statuses = ["BENEFIT_DISBURSED"];
+          break;
+
+        case "ALL":
+          statuses = [
+            "FORWARDED_TO_GOVT",
+            "GOVT_UNDER_REVIEW",
+            "APPROVED",
+            "BENEFIT_DISBURSED",
+            "REJECTED",
+          ];
+          break;
+
+        default:
+          statuses = [
+            "FORWARDED_TO_GOVT",
+            "GOVT_UNDER_REVIEW",
+            "APPROVED",
+          ];
+      }
+
+      console.log("FILTER:", filter);
+      console.log("STATUSES:", statuses);
+
+      const applications =
+        await Application.find({
+
+          status: {
+            $in: statuses,
+          },
+
+          forwarded_to_govt_at: {
+            $exists: true,
+          },
+        })
+
+        .populate("user_id")
+        .populate("scheme_id")
+
+        .sort({
+          updated_at: -1,
+        });
+
+      console.log(
+        "Government Queue Count:",
+        applications.length
+      );
+
+      return res.json({
+
+        success: true,
+
+        data: applications,
+      });
+
+    } catch (err) {
+
+      return res.status(500).json({
+
+        success: false,
+
+        error: err.message,
+      });
+    }
+  };
+
 

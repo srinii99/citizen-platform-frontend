@@ -43,6 +43,7 @@ export const WORKFLOW_RULES = {
   UNDER_REVIEW: [
 
     "DOCUMENT_VERIFIED",
+ 
 
     "NEEDS_MORE_INFO",
 
@@ -90,6 +91,7 @@ export const WORKFLOW_RULES = {
   FORWARDED_TO_GOVT: [
 
     "GOVT_UNDER_REVIEW",
+    "APPROVED",
 
     "REJECTED",
   ],

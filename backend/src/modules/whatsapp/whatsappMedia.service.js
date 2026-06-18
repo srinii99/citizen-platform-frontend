@@ -10,7 +10,7 @@ from "path";
 
 const TOKEN =
   process.env
-    .WHATSAPP_TOKEN;
+    .WHATSAPP_ACCESS_TOKEN;
 
 
 // -------------------------

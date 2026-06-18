@@ -77,6 +77,22 @@ from "../pages/AdminImportMonitoringPage";
 import AgencyApplicationsPage
 from "../pages/agency/AgencyApplicationsPage";
 
+import AgentApplications
+from "../pages/agent/AgentApplications";
+
+import AgentApplicationDetails
+from "../pages/agent/AgentApplicationDetails";
+
+import AdminGovernmentQueuePage
+from "../pages/admin/AdminGovernmentQueuePage";
+
+import AdminUsersPage
+from "../pages/admin/AdminUsersPage";
+
+
+import AdminUserDetailPage
+from "../pages/admin/AdminUserDetailPage";
+
 
 
 
@@ -308,6 +324,41 @@ function AppRoutes() {
           path="/agency/applications"
           element={
             <AgencyApplicationsPage />
+          }
+        />
+
+        <Route
+          path="/agent/applications"
+          element={<AgentApplications />}
+        />
+
+        <Route
+          path="/agent/applications/:id"
+          element={
+            <AgentApplicationDetails />
+          }
+        />
+
+        <Route
+          path="/admin/government-queue"
+          element={
+            <AdminRoute>
+              <DashboardLayout>
+                <AdminGovernmentQueuePage />
+              </DashboardLayout>
+            </AdminRoute>
+          }
+        />
+
+        <Route
+          path="/admin/users"
+          element={<AdminUsersPage />}
+        />
+
+        <Route
+          path="/admin/users/:id"
+          element={
+            <AdminUserDetailPage />
           }
         />
 

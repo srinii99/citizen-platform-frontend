@@ -46,6 +46,9 @@ export default function Sidebar({
       case "Agents":
         return <FiUsers />;
 
+      case "Government Queue":
+        return <FiFileText />;
+
       default:
         return <FiGrid />;
     }

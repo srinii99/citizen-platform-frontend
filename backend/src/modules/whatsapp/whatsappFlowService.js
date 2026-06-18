@@ -32,6 +32,11 @@ from "../scheme/scheme.model.js";
 import { Application }
 from "../application/application.model.js";
 
+import {
+  getWhatsAppMediaUrl,
+  downloadWhatsAppMedia,
+} from "./whatsappMedia.service.js";
+
 import { User }
 from "../user/user.model.js";
 
@@ -52,6 +57,8 @@ export const processIncomingMessage = async ({
   session,
   phoneNumber,
   message,
+  image,
+  document,
 }) => {
 
   const lang =
@@ -72,20 +79,7 @@ export const processIncomingMessage = async ({
     message = "RESET";
   }
 
-  if (message === "1") {
 
-    message = "VIEW_SCHEMES";
-  }
-
-  if (message === "2") {
-
-    message = "TRACK";
-  }
-
-  if (message === "5") {
-
-    message = "RESET";
-  }
 
   // Handle language button clicks
   if (
@@ -128,6 +122,12 @@ export const processIncomingMessage = async ({
   ) {
 
     console.log("VIEW_SCHEMES CLICKED");
+
+
+    const currentSession =
+      await WhatsAppSession.findOne({
+        phoneNumber,
+    });
 
 
     const maxPages =
@@ -491,7 +491,7 @@ export const processIncomingMessage = async ({
 
       return {
         nextStep:
-          WHATSAPP_STEPS.WELCOME,
+          WHATSAPP_STEPS.LANGUAGE_SELECTION,
       };
     }
 
@@ -786,6 +786,26 @@ export const processIncomingMessage = async ({
       const page =
         currentSession.currentPage || 1;
 
+      if (
+          isNaN(Number(message))
+        ) {
+
+          return {
+            type: "text",
+            text: {
+              body:
+        `Please select a scheme number.
+
+        Example:
+        1
+        2
+        3
+
+        Or type NEXT / PREV`
+            }
+          };
+        }
+
 
       const selectedIndex =
         ((page - 1) * PAGE_SIZE) +
@@ -821,15 +841,7 @@ export const processIncomingMessage = async ({
         selectedScheme?._id
       );
 
-      await WhatsAppSession.findOneAndUpdate(
-        { phoneNumber },
-        {
-          selectedSchemeId:
-            selectedScheme._id,
-        }
-      );
-
-      if (!selectedScheme) {
+         if (!selectedScheme) {
 
         return {
           type: "text",
@@ -840,6 +852,16 @@ export const processIncomingMessage = async ({
           },
         };
       }
+
+      await WhatsAppSession.findOneAndUpdate(
+        { phoneNumber },
+        {
+          selectedSchemeId:
+            selectedScheme._id,
+        }
+      );
+
+   
 
       return {
         success: true,
@@ -892,11 +914,11 @@ export const processIncomingMessage = async ({
         let application =
           await Application.findOne({
 
-            _id:
-              applicationId,
-
             user_id:
               user._id,
+            
+            scheme_id:
+              currentSession.selectedSchemeId,
 
             submitted_via:
               "WHATSAPP",
@@ -1014,13 +1036,15 @@ export const processIncomingMessage = async ({
 
       console.log("DOCUMENT_UPLOAD HIT");
 
-      if (message !== "UPLOAD") {
+      if (
+        !image &&
+        !document
+      ) {
         return {
           type: "text",
           text: {
             body:
-              t(lang,
-              "PLEASE_UPLOAD")
+              "📄 Please upload the requested document as an Image or PDF."
           }
         };
       }
@@ -1034,6 +1058,36 @@ export const processIncomingMessage = async ({
         await Application.findById(
           currentSession.applicationId
         );
+
+      const mediaId =
+        image?.id ||
+        document?.id;
+
+      console.log(
+        "MEDIA ID:",
+        mediaId
+      );
+
+      const mediaUrl =
+        await getWhatsAppMediaUrl(
+          mediaId
+        );
+
+      console.log(
+        "MEDIA URL:",
+        mediaUrl
+      );
+
+      const localFilePath =
+        await downloadWhatsAppMedia(
+          mediaUrl,
+          `${Date.now()}`
+        );
+
+      console.log(
+        "MEDIA DOWNLOADED:",
+        localFilePath
+      );
 
       const docs =
         application?.required_documents || [];
@@ -1073,17 +1127,22 @@ export const processIncomingMessage = async ({
    
 
 
-      application.documents.push({
+    application.documents.push({
 
-        document_name:
-          docs[currentIndex].document_name,
+      document_name:
+        docs[currentIndex].document_name,
 
-        document_type:
-          docs[currentIndex].document_type,
+      document_type:
+        image
+          ? "IMAGE"
+          : "PDF",
 
-        whatsapp_media_id:
-          `TEST-${Date.now()}`,
-      });
+      whatsapp_media_id:
+        mediaId,
+
+      file_url:
+        localFilePath,
+    });
 
 
       console.log(

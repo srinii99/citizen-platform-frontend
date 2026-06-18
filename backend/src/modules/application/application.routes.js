@@ -14,6 +14,7 @@ import {
   getAgentApplications,
   getAgencyApplications,
   getDocumentViewUrl,
+  getGovernmentQueue,
 } from "./application.controller.js";
 
 import {
@@ -54,6 +55,15 @@ router.get(
   "/my",
   authMiddleware,
   getMyApplications
+);
+
+router.get(
+
+  "/government-queue",
+
+  authMiddleware,
+
+  getGovernmentQueue
 );
 
 // Get single application
@@ -147,5 +157,7 @@ router.get(
   authMiddleware,
   getDocumentViewUrl
 );
+
+
 
 export default router;

@@ -53,6 +53,13 @@ import {
 }
 from "./importMonitoringController.js";
 
+import {
+  getUsers,
+  getUserById,
+} from "./adminUser.controller.js";
+
+
+
 
 const router =
   express.Router();
@@ -235,5 +242,32 @@ router.get(
   "/import-monitoring/history",
   getRecentImportJobs
 );
+
+// -----------------------------------
+// USERS
+// -----------------------------------
+
+router.get(
+
+  "/users",
+
+  authMiddleware,
+
+  allowRoles(
+    ...ADMIN_ACCESS
+  ),
+
+  getUsers
+);
+
+router.get(
+  "/users/:id",
+  authMiddleware,
+  allowRoles(
+    ...ADMIN_ACCESS
+  ),
+  getUserById
+);
+
 
 export default router;

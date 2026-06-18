@@ -51,6 +51,10 @@ import {
 } from "./whatsappSessionService.js";
 
 import {
+  WHATSAPP_STEPS,
+} from "./whatsappConstants.js";
+
+import {
   processIncomingMessage,
 } from "./whatsappFlowService.js";
 
@@ -70,6 +74,8 @@ import {
 import {
   buildViewSchemesButton,
 } from "./helpers/interactiveMessages.js";
+
+
 
 
 
@@ -110,7 +116,7 @@ export const verifyWebhook =
       token === whatsappConfig.verifyToken
     ) {
 
-      whatsappLog(
+      console.log(
         "Webhook verified"
       );
 
@@ -199,16 +205,26 @@ export const receiveMessage =
       }
 
 
-      const mobile =
+     const mobile =
         message.from;
 
-      const text =
+      let text =
         message.text?.body || "";
+
+      if (
+        message.interactive?.button_reply?.id
+      ) {
+        text =
+          message.interactive
+            .button_reply
+            .id;
+      }
 
       if (
         !message.text &&
         !message.image &&
-        !message.document
+        !message.document &&
+        !message.interactive
       ) {
 
         console.log(
@@ -330,6 +346,8 @@ export const receiveMessage =
           session,
           phoneNumber: mobile,
           message:text,
+          image,
+          document,
         });
 
       if (result?.nextStep) {
@@ -338,6 +356,104 @@ export const receiveMessage =
           mobile,
           result.nextStep
         );
+
+      // -------------------------
+// AUTO RUN ELIGIBILITY
+// -------------------------
+
+    if (
+      result.nextStep ===
+      WHATSAPP_STEPS.ELIGIBILITY_CHECK
+    ) {
+
+      const updatedSession =
+        await getOrCreateSession(
+          mobile
+        );
+
+      const eligibilityResult =
+        await processIncomingMessage({
+          session: updatedSession,
+          phoneNumber: mobile,
+          message: "__AUTO__",
+        });
+
+      console.log(
+        "AUTO ELIGIBILITY RESULT:",
+        JSON.stringify(
+          eligibilityResult,
+          null,
+          2
+        )
+      );
+
+      console.log(
+        "AUTO ELIGIBILITY RESULT:",
+        eligibilityResult
+      );
+
+      if (eligibilityResult?.nextStep) {
+
+        await updateStep(
+          mobile,
+          eligibilityResult.nextStep
+        );
+
+      if (
+        eligibilityResult.nextStep ===
+        WHATSAPP_STEPS.SCHEME_SELECTION
+      ) {
+
+        const updatedSession =
+          await getOrCreateSession(
+            mobile
+          );
+
+        const schemeResult =
+          await processIncomingMessage({
+            session: updatedSession,
+            phoneNumber: mobile,
+            message: "VIEW_SCHEMES",
+          });
+
+        await sendWhatsAppResponse(
+          mobile,
+          schemeResult
+        );
+
+        return res.sendStatus(200);
+      }
+
+        let nextMessage;
+
+        if (
+          eligibilityResult.schemeMessage
+        ) {
+
+          nextMessage = {
+            type: "text",
+            text: {
+              body:
+                eligibilityResult.schemeMessage,
+            },
+          };
+
+        } else {
+
+          nextMessage =
+            getMessageForStep(
+              eligibilityResult.nextStep
+            );
+        }
+
+        await sendWhatsAppResponse(
+          mobile,
+          nextMessage
+        );
+
+        return res.sendStatus(200);
+      }
+    }
 
        
         let nextMessage;

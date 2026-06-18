@@ -15,6 +15,14 @@ const TOKEN =
 const PHONE_NUMBER_ID =
   whatsappConfig.phoneNumberId;
 
+console.log(
+  "WHATSAPP CONFIG:",
+  {
+    hasToken: !!TOKEN,
+    phoneNumberId: PHONE_NUMBER_ID,
+  }
+);
+
 
 // -------------------------
 // SEND WHATSAPP MESSAGE

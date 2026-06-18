@@ -336,6 +336,7 @@ const applicationSchema =
           document_type: String,
 
           file_url: String,
+          file_path: String,
 
           whatsapp_media_id: String,
 
@@ -404,6 +405,18 @@ const applicationSchema =
 
       forwarded_to_govt_at: {
         type: Date,
+      },
+
+      approved_at: {
+        type: Date,
+      },
+
+      rejected_at:{
+        type:Date,
+      },
+
+      benefit_disbursed_at:{
+        type:Date,
       },
     }
   );

@@ -42,6 +42,16 @@ export default function DashboardLayout({
         },
 
         {
+          label: "Citizens",
+          path: "/admin/users",
+        },
+
+        {
+          label: "Government Queue",
+          path: "/admin/government-queue",
+        },
+
+        {
           label: "Agencies",
           path: "/admin/agencies",
         },
@@ -53,6 +63,8 @@ export default function DashboardLayout({
           label: "Scheme Sources",
           path: "/admin/scheme-sources",
         },
+
+        
       ]
 
     : [

@@ -56,6 +56,13 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+app.get("/ping", (req, res) => {
+  console.log("PING HIT");
+  res.send("pong");
+});
+
+
 app.use("/api/auth", authRoutes);
 
 app.use("/api/profile", profileRoutes);
@@ -90,7 +97,8 @@ app.use(
 app.use(
   "/api/admin",
   adminRoutes);
-app.use(errorMiddleware);
+
+
 
 app.use(
   "/api/dashboard",
@@ -133,6 +141,8 @@ app.use(
 );
 
 
+
+
 const startServer =
   async () => {
 
@@ -149,16 +159,20 @@ const startServer =
 
 startServer();
 
-// Test route
-app.get("/", (req, res) => {
-  res.send("API Running 🚀");
-});
+
+
+
 
 const PORT = process.env.PORT || 3000;
 
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
+
+console.log(
+  "PORT VALUE:",
+  process.env.PORT
+);
 
 // Test route
 app.get("/", (req, res) => {
@@ -171,4 +185,5 @@ app.get("/test-whatsapp-env", (req, res) => {
     verifyToken:
       process.env.WHATSAPP_VERIFY_TOKEN,
   });
+  app.use(errorMiddleware);
 });
